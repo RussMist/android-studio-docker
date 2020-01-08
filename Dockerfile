@@ -1,8 +1,6 @@
 FROM ubuntu:19.10
 LABEL maintainer="russmist@gmail.com"
 
-ENV NO_AT_BRIDGE 1
-
 RUN dpkg --add-architecture i386
 RUN apt-get update
 
