@@ -2,15 +2,29 @@
 # X11 display path
 export DISPLAY="host.docker.internal:0.0"
 
-# supporting adb device via TCP with device ip and port 5555
+# Adb device port
+export DEVICE_PORT=5555
+
+# prevent more than one adb connection via usb
+$ANDROID_SDK_HOME/platform-tools/adb disconnect
+
+# get device wifi ip
+DEVICE_IP=$($ANDROID_SDK_HOME/platform-tools/adb shell ip addr show wlan0 | grep "inet\s" | awk '{print $2}' | awk -F'/' '{print $1}')
+export DEVICE_ADDRESS=$DEVICE_IP:$DEVICE_PORT
+
+# supporting adb device via TCP with device ip and port that defines at $DEVICE_PORT
 # ANDROID_SDK_HOME - path for android sdk, should be defined by environment vars
-$ANDROID_SDK_HOME/platform-tools/adb tcpip 5555
+$ANDROID_SDK_HOME/platform-tools/adb tcpip $DEVICE_PORT
 
-# uncomment this line for first launch.
-# docker build -t androiid_studio_image .
+# comment this line if image was builded (non first launch).
+docker build -t androiid_studio_image .
 
-docker run -it --net=host --env="DISPLAY" \
+# after android studio will be configured and all sdk will be installed, You should connect to device via $ANDROID_HOME/platform-tools/adb connect $DEVICE_ADDRESS
+# where $ANDROID_HOME - is actual android sdk path in docker container
+docker run -it --net=host --env="DISPLAY" --env="DEVICE_ADDRESS"\
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -v "$HOME/.Xauthority:/root/.Xauthority:rw" \
   androiid_studio_image \
-  /opt/android-studio/bin/studio.sh
+  /bin/bash -c "/opt/android-sdk/tools/bin/sdkmanager 'tools' 'platform-tools' 'platforms;android-29' 'build-tools;29.0.2' 'sources;android-29' && \
+  /opt/android-sdk/platform-tools/adb connect $DEVICE_ADDRESS && \
+  /opt/android-studio/bin/studio.sh"

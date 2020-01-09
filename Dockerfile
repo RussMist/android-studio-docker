@@ -8,25 +8,23 @@ RUN apt-get update
 RUN apt-get install -y curl unzip
 
 RUN curl 'https://dl.google.com/dl/android/studio/ide-zips/3.5.3.0/android-studio-ide-191.6010548-linux.tar.gz' > /tmp/studio.tar.gz && tar -xzf /tmp/studio.tar.gz -C /opt && rm /tmp/studio.tar.gz
+RUN curl 'https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip' > /tmp/android-sdk.zip && unzip -d /opt/android-sdk /tmp/android-sdk.zip && rm /tmp/android-sdk.zip
+ENV ANDROID_STUDIO_PATH=/opt/android-studio
+ENV ANDROID_HOME=/opt/android-sdk
+ENV PATH="${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools/"
 
 # Install X11
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y xorg
 
-# Install other useful tools
-RUN apt-get install -y vim ant
-
-# install Java
-RUN apt-get install -y default-jdk
+# install Java0,
+RUN apt-get install -y openjdk-8-jdk
 
 # Install prerequisites
 RUN apt-get install -y libz1 libncurses5 libbz2-1.0:i386 libstdc++6 libbz2-1.0 lib32stdc++6 lib32z1
 
 # Install git
 RUN apt-get install -y git
-
-# Install adb
-RUN apt-get install -y usbutils android-tools-adb
 
 # Clean up
 RUN apt-get clean
