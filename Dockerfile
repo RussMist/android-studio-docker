@@ -26,6 +26,16 @@ RUN apt-get install -y libz1 libncurses5 libbz2-1.0:i386 libstdc++6 libbz2-1.0 l
 # Install git
 RUN apt-get install -y git
 
+# Install other usefull utils
+RUN apt-get install -y mc
+RUN apt-get install -y software-properties-common
+RUN apt-get install -y wget
+
+# Instal opera browser
+RUN wget -qO- https://deb.opera.com/archive.key | apt-key add -
+RUN add-apt-repository "deb [arch=i386,amd64] https://deb.opera.com/opera-stable/ stable non-free"
+RUN apt install -y opera-stable
+
 # Clean up
 RUN apt-get clean
 RUN apt-get purge
