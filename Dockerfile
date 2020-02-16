@@ -9,6 +9,7 @@ RUN apt-get install -y curl unzip
 
 # Install Java jdk 8
 RUN apt-get install -y openjdk-8-jdk
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 
 # Install prerequisites
 RUN apt-get install -y libz1 libncurses5 libbz2-1.0:i386 libstdc++6 libbz2-1.0 lib32stdc++6 lib32z1
@@ -17,6 +18,7 @@ RUN apt-get install -y libz1 libncurses5 libbz2-1.0:i386 libstdc++6 libbz2-1.0 l
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y xorg
 
+# Install android studio & sdk
 RUN curl 'https://dl.google.com/dl/android/studio/ide-zips/3.6.0.19/android-studio-ide-192.6165589-linux.tar.gz' > /tmp/studio.tar.gz && tar -xzf /tmp/studio.tar.gz -C /opt && rm /tmp/studio.tar.gz
 RUN curl 'https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip' > /tmp/android-sdk.zip && unzip -d /opt/android-sdk /tmp/android-sdk.zip && rm /tmp/android-sdk.zip
 ENV ANDROID_STUDIO_PATH=/opt/android-studio
@@ -36,7 +38,18 @@ RUN wget -qO- https://deb.opera.com/archive.key | apt-key add -
 RUN add-apt-repository "deb [arch=i386,amd64] https://deb.opera.com/opera-stable/ stable non-free"
 RUN apt install -y opera-stable
 
+# Install npm
+RUN apt-get install -y npm
+
+# Install VSCode
+RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+RUN add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+RUN apt update
+RUN apt install -y code
+
 # Clean up
 RUN apt-get clean -y
 RUN apt-get purge -y
 
+# Copy git helper script
+COPY ./init_repo.sh /root/init_repo.sh
