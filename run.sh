@@ -26,6 +26,6 @@ docker run -it --net=host --env="DISPLAY" --env="DEVICE_ADDRESS"\
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -v "$HOME/.Xauthority:/root/.Xauthority:rw" \
   android_studio_image \
-  /bin/bash -c "echo y | /opt/android-sdk/tools/bin/sdkmanager 'tools' 'platform-tools' 'platforms;android-29' 'build-tools;29.0.3' 'sources;android-29' && \
+  /bin/bash -c "echo y | /opt/android-sdk/tools/bin/sdkmanager --sdk_root=/opt/android-sdk 'tools' 'platform-tools' 'platforms;android-29' 'build-tools;29.0.3' 'sources;android-29' 'emulator' && \
   /opt/android-sdk/platform-tools/adb connect $DEVICE_ADDRESS && \
   /opt/android-studio/bin/studio.sh"

@@ -19,8 +19,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y xorg
 
 # Install android studio & sdk
-RUN curl 'https://dl.google.com/dl/android/studio/ide-zips/3.6.0.19/android-studio-ide-192.6165589-linux.tar.gz' > /tmp/studio.tar.gz && tar -xzf /tmp/studio.tar.gz -C /opt && rm /tmp/studio.tar.gz
-RUN curl 'https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip' > /tmp/android-sdk.zip && unzip -d /opt/android-sdk /tmp/android-sdk.zip && rm /tmp/android-sdk.zip
+RUN curl -L 'https://redirector.gvt1.com/edgedl/android/studio/ide-zips/4.0.0.13/android-studio-ide-193.6348893-linux.tar.gz' -o /tmp/studio.tar.gz && tar -xzf /tmp/studio.tar.gz -C /opt && rm /tmp/studio.tar.gz
+RUN curl -L 'https://dl.google.com/android/repository/commandlinetools-linux-6200805_latest.zip' -o /tmp/android-sdk.zip && unzip -d /opt/android-sdk /tmp/android-sdk.zip && rm /tmp/android-sdk.zip
 ENV ANDROID_STUDIO_PATH=/opt/android-studio
 ENV ANDROID_HOME=/opt/android-sdk
 ENV PATH="${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools/"
@@ -29,14 +29,7 @@ ENV PATH="${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools/"
 RUN apt-get install -y git
 
 # Install other usefull utils
-RUN apt-get install -y mc
-RUN apt-get install -y software-properties-common
-RUN apt-get install -y wget
-
-# Instal opera browser
-RUN wget -qO- https://deb.opera.com/archive.key | apt-key add -
-RUN add-apt-repository "deb [arch=i386,amd64] https://deb.opera.com/opera-stable/ stable non-free"
-RUN apt install -y opera-stable
+RUN apt-get install -y mc software-properties-common wget
 
 # Install npm
 RUN apt-get install -y npm
@@ -44,12 +37,15 @@ RUN apt-get install -y npm
 # Install VSCode
 RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
 RUN add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
-RUN apt update
-RUN apt install -y code
+RUN apt-get update && apt-get install -y code
+
+# Install yandex direct downloader
+RUN apt-get install -y python3-pip
+RUN pip3 install wldhx.yadisk-direct
+RUN echo "ya_download() { curl -L \$(yadisk-direct \$1) -o \$2; }" >> /root/.bashrc
 
 # Clean up
-RUN apt-get clean -y
-RUN apt-get purge -y
+RUN apt-get clean -y && apt-get purge -y
 
 # Copy git helper script
 COPY ./init_repo.sh /root/init_repo.sh
